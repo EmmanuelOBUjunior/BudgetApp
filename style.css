@@ -62,9 +62,9 @@ input[type=number] {
     font-family: 'Gilroy Bold';
 }
 
-.budget-header{
+/* .budget-header{
 
-}
+} */
 
 .budget-header .balance{
     margin-top: 45px;
@@ -227,9 +227,9 @@ input[type=number] {
     background-repeat: no-repeat;
 }
 
-.budget-dashboard #all ul.list li.income{
+/* .budget-dashboard #all ul.list li.income{
 
-}
+} */
 .budget-dashboard #all ul.list li.expense{
     color: #f0624d;
 }

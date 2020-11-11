@@ -6,7 +6,7 @@ const incomeEl = document.querySelector('#income');
 const expenseEl = document.querySelector('#expense');
 const allEl = document.querySelector('#all');
 const incomeList = document.querySelector('#income .list');
-const expenseList = document.querySelector('#outcome .list');
+const expenseList = document.querySelector('#expense .list');
 const allList = document.querySelector('#all .list');
 
 //Select buttons
@@ -24,10 +24,11 @@ const incomeTitle = document.getElementById('income-title-input');
 const incomeAmount = document.getElementById('income-amount-input');
 
 //Variables
-let ENTRY_LIST =[];
+let ENTRY_LIST = [];
 let balance = 0, income = 0, outcome = 0;
 
 const DELETE = 'delete', EDIT = 'edit';
+
 //Event Listeners
 expenseBtn.addEventListener('click', function(){
     show(expenseEl);
@@ -51,12 +52,14 @@ addExpense.addEventListener("click", function(){
     //if one of the inputs is empty => EXIT
     if(!expenseTitle.value || !expenseAmount.value) return;
     //save the entry to entry_list
-    let expense ={
+    let expense = {
         type : "expense",
         title: expenseTitle.value,
         amount: expenseAmount.value
     }
     ENTRY_LIST.push(expense);
+    updateUI();
+    clearInput([expenseTitle, expenseAmount]);
 })
 addIncome.addEventListener("click", function(){
     //if one of the inputs is empty => EXIT
@@ -68,12 +71,71 @@ addIncome.addEventListener("click", function(){
         amount: incomeAmount.value
     }
     ENTRY_LIST.push(income);
+    updateUI();
+    clearInput(incomeTitle, incomeAmount)
 })
 
 //Functions
+function updateUI(){
+     income = calculateTotal('income', ENTRY_LIST);
+     outcome = calculateTotal('outcome', ENTRY_LIST);
+     balance = calculateBalance(income, outcome);
+    //Updating UI
+     clearElement([expenseList, incomeList, allList]);
+     //determine sign of balance
+     let sign = (income >= outcome ? "$" : "-$");
+
+     ENTRY_LIST.forEach((entry, index) =>{
+         if(entry.type == "expense"){
+             showEntry(expenseList, entry.type, entry.title, entry.amount, index)
+         }else if(entry.type == "income"){
+            showEntry(incomeList, entry.type, entry.title, entry.amount, index)
+        }
+        showEntry(allList, entry.type, entry.title, entry.amount, index)
+     });
+}
+
+function showEntry(list, type, title, amount, id){
+    const entry = `<li id = "${id}" class="${type}">
+                        <div class = "entry">${title}: $${amount}</div>
+                        <div id = "edit"></div>
+                        <div id = "delete"></div>
+                   </li>
+    `;
+    const position = "afterbegin";
+    list.insertAdjacentHTML(position, entry);
+}
+
+function clearElement(elements){
+    elements.forEach(element =>{
+        element.innerHTML = "";
+    })
+}
+
+function clearInput(inputs){
+    inputs.forEach(input =>{
+        input.value = "";
+    })
+}
+
+function calculateTotal(type, list){
+    let sum = 0;
+
+    list.forEach(entry =>{
+        if(entry.type == type){
+            sum += entry.amount;
+        }
+    })
+    return sum;
+}
+
+function calculateBalance(income, outcome){
+    return income - outcome;
+}
 function show(element){
     element.classList.remove('hide');
 }
+
 function hide(elements){
     elements.forEach( element =>{
         element.classList.add('hide');
